@@ -1,16 +1,25 @@
-# This is a sample Python script.
-
-# Press Maj+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from session import Session
+from usermanager import UserManager
+from user import User
+import uuid
 
 
-# Press the green button in the gutter to run the script.
+class Main:
+
+    def start_bank(self):
+        user_1 = User(str(uuid.uuid4()), 'joe', '7D2d69881*', [], [], 'admin')
+        user_2 = User(str(uuid.uuid4()), 'jack', '7D2d69881*', [], [], 'normal')
+        current_session = Session(user_1)
+        if current_session.get_current_user().get_role() == 'admin':
+            user_manager = UserManager('users.txt')
+            user_manager.add_user(user_1)
+            user_manager.add_user(user_2)
+        else:
+            raise ValueError("You do not have access to those functionalities")
+
+        print(user_manager.get_user_from_file())
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main = Main()
+    main.start_bank()
