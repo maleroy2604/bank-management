@@ -1,7 +1,10 @@
 import os.path
 import unittest
+import uuid
 
+from account import Account
 from session import Session
+from transaction import Transaction
 from user import User
 from filemanager import FileManager
 from usermanager import UserManager
@@ -9,7 +12,8 @@ from usermanager import UserManager
 
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self._user = User(0, 'joe', '7D2d69881*', [], 'admin')
+        self._user = User(uuid.uuid4(), 'joe', '7D2d69881*', [], [], 'admin')
+        self._user_2 = User(uuid.uuid4(), 'jack', '7D2d69881*', [], [], 'user')
         self._filename = "user-test.txt"
 
     def tearDown(self) -> None:
@@ -37,9 +41,21 @@ class MyTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             user_manager.get_user_from_file()
 
+    def test_add_account_success(self):
+        account_1 = Account(uuid.uuid4(), 2000, self._user)
+        self._user.add_account(account_1)
+        excepted_list_of_accounts = [account_1]
+        self.assertEqual(self._user.get_accounts(), excepted_list_of_accounts)
 
-
-
+    def test_transaction_success(self):
+        account_1 = Account(str(uuid.uuid4()), 2000, self._user.get_user_id())
+        account_2 = Account(str(uuid.uuid4()), 2000, self._user_2.get_user_id())
+        self._user.add_account(account_1)
+        self._user_2.add_account(account_2)
+        transaction = Transaction(str(uuid.uuid4()), account_1, account_2, 50)
+        self._user.make_payment(transaction)
+        self._user_2.receive_payment(transaction)
+        self.assertEqual(account_1.get_amount(), 1950)
 
 if __name__ == '__main__':
     unittest.main()

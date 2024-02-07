@@ -20,3 +20,38 @@ class User:
 
     def get_role(self):
         return self._role
+
+    def get_user_id(self):
+        return self._id
+
+    def get_accounts(self):
+        return self._accounts
+
+    def add_account(self, account):
+        self._accounts.append(account)
+
+    def find_account(self, account_id):
+        for account in self._accounts:
+            if account.get_account_id() == account_id:
+                return account
+            else:
+                raise ValueError(f"account n° {account_id} not found")
+
+    def make_payment(self, transaction):
+        account_id = transaction.get_account_sender().get_account_id()
+        account = self.find_account(account_id)
+        account.withdraw(transaction.get_amount())
+
+    def receive_payment(self, transaction):
+        account_id = transaction.get_account_receiver().get_account_id()
+        account = self.find_account(account_id)
+        account.deposit(transaction.get_amount())
+        
+
+
+
+
+
+
+
+
